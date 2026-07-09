@@ -9,6 +9,6 @@
   ],
   "on_block_hit": {
     "type": "cdb:break_block",
-    "tag": "cdb:breakable_by_cannon"
+    "tag": "create:breakable_by_cannon"
   }
 }
