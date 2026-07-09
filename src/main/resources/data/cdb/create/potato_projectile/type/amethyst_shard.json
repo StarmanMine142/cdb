@@ -6,5 +6,9 @@
   "render_tumbling": true,
   "items": [
     "minecraft:amethyst_shard"
-  ]
+  ],
+  "on_block_hit": {
+    "type": "cdb:break_block",
+    "tag": "cdb:breakable_by_cannon"
+  }
 }
