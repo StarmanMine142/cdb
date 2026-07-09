@@ -15,11 +15,6 @@ import net.neoforged.neoforge.registries.RegisterEvent;
 public class CannonDestroyingBlock {
     public static final String MODID = "cdb";
 
-    public static final TagKey<Block> BREAKABLE_BY_CANNON = TagKey.create(
-            Registries.BLOCK,
-            ResourceLocation.fromNamespaceAndPath(MODID, "breakable_by_cannon")
-    );
-
     @SubscribeEvent
     public static void onRegister(RegisterEvent event) {
         event.register(CreateRegistries.POTATO_PROJECTILE_BLOCK_HIT_ACTION, helper -> {
