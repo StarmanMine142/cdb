@@ -3,10 +3,10 @@ package com.starman.cdb;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.simibubi.create.api.equipment.potatoCannon.PotatoProjectileBlockHitAction;
+import com.zurrtum.create.api.equipment.potatoCannon.PotatoProjectileBlockHitAction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelAccessor;
@@ -20,7 +20,7 @@ public record BreakBlockAction(TagKey<Block> tag, int breakSteps) implements Pot
     private static final Map<BlockPos, Integer> HIT_CACHE = new HashMap<>();
 
     public static final MapCodec<BreakBlockAction> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            ResourceLocation.CODEC.fieldOf("tag").xmap(id -> TagKey.create(Registries.BLOCK, id), TagKey::location).forGetter(BreakBlockAction::tag),
+            Identifier.CODEC.fieldOf("tag").xmap(id -> TagKey.create(Registries.BLOCK, id), TagKey::location).forGetter(BreakBlockAction::tag),
             Codec.intRange(1, 10).optionalFieldOf("break_steps", 1).forGetter(BreakBlockAction::breakSteps)
     ).apply(instance, BreakBlockAction::new));
 

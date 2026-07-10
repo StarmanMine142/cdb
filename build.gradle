@@ -1,74 +1,51 @@
 plugins {
-    id 'java-library'
-    id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.141'
-    id 'idea'
-}
-
-tasks.named('wrapper', Wrapper).configure {
-    distributionType = Wrapper.DistributionType.BIN
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+	id 'maven-publish'
 }
 
 version = project.mod_version_spec
-group = mod_group_id
+group = project.mod_group_id
 
 repositories {
-    maven { url = "https://maven.createmod.net" }
+	maven { url = "https://api.modrinth.com/maven" }
 }
 
 base {
-    archivesName = mod_id
+	archivesName = mod_id
 }
 
 java {
-    withSourcesJar()
-    toolchain.languageVersion = JavaLanguageVersion.of(21)
-}
-
-neoForge {
-    version = project.loader_version
-
-    parchment {
-        mappingsVersion = project.parchment_mappings_version
-        minecraftVersion = project.parchment_minecraft_version
-    }
-}
-
-configurations {
-    runtimeClasspath.extendsFrom localRuntime
+	withSourcesJar()
+	toolchain.languageVersion = JavaLanguageVersion.of(25)
 }
 
 dependencies {
-    implementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	implementation "maven.modrinth:create-fly:${project.minecraft_version}-${project.create_version}"
+
 }
 
 def resourceTargets = [
-        minecraft_version      : minecraft_version,
-        minecraft_version_range: minecraft_version_range,
-        loader_version         : loader_version,
-        loader_version_range   : loader_version_range,
-        mod_id                 : mod_id,
-        mod_name               : mod_name,
-        mod_description        : mod_description,
-        mod_license            : mod_license,
-        mod_version            : mod_version,
+		minecraft_version      : minecraft_version,
+		minecraft_version_range: minecraft_version_range,
+		loader_version         : loader_version,
+		mod_id                 : mod_id,
+		mod_name               : mod_name,
+		mod_description        : mod_description,
+		mod_license            : mod_license,
+		mod_version            : mod_version,
 ]
 
 processResources {
-    inputs.properties(resourceTargets)
+	inputs.properties(resourceTargets)
 
-    filesMatching("META-INF/neoforge.mods.toml") {
-        expand resourceTargets
-    }
+	filesMatching("fabric.mod.json") {
+		expand resourceTargets
+	}
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
-}
-
-idea {
-    module {
-        downloadSources = true
-        downloadJavadoc = true
-    }
+	options.encoding = 'UTF-8'
 }
