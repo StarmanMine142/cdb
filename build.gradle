@@ -9,12 +9,11 @@ tasks.named('wrapper', Wrapper).configure {
     distributionType = Wrapper.DistributionType.BIN
 }
 
-version = mod_version
+version = project.mod_version_spec
 group = mod_group_id
 
 repositories {
     maven { url = "https://maven.createmod.net" }
-    maven { url = "https://maven.ithundxr.dev/snapshots" }
 }
 
 base {
@@ -27,7 +26,7 @@ java {
 }
 
 neoForge {
-    version = project.neo_version
+    version = project.loader_version
 
     parchment {
         mappingsVersion = project.parchment_mappings_version
@@ -41,19 +40,16 @@ configurations {
 
 dependencies {
     implementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
-    implementation("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
-    compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
-    runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
-    implementation("com.tterrag.registrate:Registrate:${registrate_version}")
 }
 
 def resourceTargets = [
         minecraft_version      : minecraft_version,
         minecraft_version_range: minecraft_version_range,
-        neo_version            : neo_version,
+        loader_version         : loader_version,
         loader_version_range   : loader_version_range,
         mod_id                 : mod_id,
         mod_name               : mod_name,
+        mod_description        : mod_description,
         mod_license            : mod_license,
         mod_version            : mod_version,
 ]

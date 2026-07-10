@@ -6,15 +6,15 @@ license="${mod_license}"
 modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
-logoFile = "assets/${mod_id}/icon.png"
+logoFile="assets/${mod_id}/icon.png"
 authors="Starman, dungeonerr (idea)"
 description='''
-Potato cannon projectiles can now break blocks!
+${mod_description}
 '''
 [[dependencies.${mod_id}]]
     modId="neoforge"
     type="required"
-    versionRange="[${neo_version},)"
+    versionRange="[${loader_version},)"a
     ordering="NONE"
     side="BOTH"
 
