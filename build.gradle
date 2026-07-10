@@ -5,12 +5,8 @@ plugins {
     id 'idea'
 }
 
-tasks.named('wrapper', Wrapper).configure {
-    distributionType = Wrapper.DistributionType.BIN
-}
-
 version = project.mod_version_spec
-group = mod_group_id
+group = project.mod_group_id
 
 repositories {
     maven { url = "https://maven.createmod.net" }
@@ -27,15 +23,6 @@ java {
 
 neoForge {
     version = project.loader_version
-
-    parchment {
-        mappingsVersion = project.parchment_mappings_version
-        minecraftVersion = project.parchment_minecraft_version
-    }
-}
-
-configurations {
-    runtimeClasspath.extendsFrom localRuntime
 }
 
 dependencies {
@@ -64,11 +51,4 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-}
-
-idea {
-    module {
-        downloadSources = true
-        downloadJavadoc = true
-    }
 }
