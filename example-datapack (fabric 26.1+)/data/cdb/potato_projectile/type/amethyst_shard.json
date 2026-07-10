@@ -1,0 +1,15 @@
+{
+  "damage": 6,
+  "reload_ticks": 0,
+  "velocity": 1.8,
+  "knockback": 0.2,
+  "render_tumbling": true,
+  "items": [
+    "minecraft:amethyst_shard"
+  ],
+  "on_block_hit": {
+    "type": "cdb:break_block",
+    "break_steps": 5,
+    "tag": "cdb:breakable_by_cannon"
+  }
+}
