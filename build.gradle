@@ -22,8 +22,7 @@ java {
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
-	implementation "maven.modrinth:create-fly:${project.minecraft_version}-${project.create_version}"
+	implementation "maven.modrinth:create-fly:${project.minecraft_version}-rc-2-${project.create_version}"
 
 }
 

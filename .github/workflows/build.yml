@@ -21,5 +21,5 @@ jobs:
       - name: capture build artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: Artifacts-26.1-fabric
+          name: Artifacts-26.x-fabric
           path: build/libs/
