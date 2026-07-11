@@ -1,6 +1,7 @@
 {
   "pack": {
-    "pack_format": 48,
+    "min_format": 101,
+    "max_format": 9999,
     "description": "It's example datapack for CDB mod!"
   }
 }
