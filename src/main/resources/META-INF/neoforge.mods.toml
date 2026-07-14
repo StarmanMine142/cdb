@@ -11,10 +11,11 @@ authors="Starman, dungeonerr (idea)"
 description='''
 ${mod_description}
 '''
+
 [[dependencies.${mod_id}]]
     modId="neoforge"
     type="required"
-    versionRange="[${loader_version},)"a
+    versionRange="[${loader_version},)"
     ordering="NONE"
     side="BOTH"
 
