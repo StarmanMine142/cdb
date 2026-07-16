@@ -1,0 +1,17 @@
+{
+  "damage": 6,
+  "reload_ticks": 0,
+  "velocity": 1.8,
+  "knockback": 0.2,
+  "render_tumbling": true,
+  "items": [
+    "minecraft:string"
+  ],
+  "on_block_hit": {
+    "type": "cdb:break_block",
+    "presets": [
+      "cdb:stone",
+      "cdb:wood"
+    ]
+  }
+}
