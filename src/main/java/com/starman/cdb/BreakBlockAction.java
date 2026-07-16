@@ -9,19 +9,23 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.BlockHitResult;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-public record BreakBlockAction(TagKey<Block> tag, int breakSteps) implements PotatoProjectileBlockHitAction {
+public record BreakBlockAction(Optional<TagKey<Block>> tag, int breakSteps, List<Identifier> presets) implements PotatoProjectileBlockHitAction {
 
     private static final Map<BlockPos, Integer> HIT_CACHE = new HashMap<>();
 
     public static final MapCodec<BreakBlockAction> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            Identifier.CODEC.fieldOf("tag").xmap(id -> TagKey.create(Registries.BLOCK, id), TagKey::location).forGetter(BreakBlockAction::tag),
-            Codec.intRange(1, 10).optionalFieldOf("break_steps", 1).forGetter(BreakBlockAction::breakSteps)
+            TagKey.codec(Registries.BLOCK).optionalFieldOf("tag").forGetter(BreakBlockAction::tag),
+            Codec.intRange(1, 10).optionalFieldOf("break_steps", 1).forGetter(BreakBlockAction::breakSteps),
+            Identifier.CODEC.listOf().optionalFieldOf("presets", List.of()).forGetter(BreakBlockAction::presets)
     ).apply(instance, BreakBlockAction::new));
 
     @Override
@@ -29,23 +33,37 @@ public record BreakBlockAction(TagKey<Block> tag, int breakSteps) implements Pot
         if (level.isClientSide()) return true;
 
         BlockPos pos = ray.getBlockPos();
-        if (!level.getBlockState(pos).is(this.tag)) return true;
 
-        if (level instanceof net.minecraft.world.level.Level world) {
-            int currentHits = HIT_CACHE.getOrDefault(pos, 0) + 1;
+        tag.ifPresent(t -> handle(level, pos, new CannonPreset(breakSteps, Optional.of(t), Optional.empty())));
 
-            if (currentHits >= this.breakSteps) {
-                level.destroyBlock(pos, true);
-                HIT_CACHE.remove(pos);
-                world.destroyBlockProgress(pos.hashCode(), pos, -1);
-            } else {
-                HIT_CACHE.put(pos, currentHits);
-                int stage = (int) (((float) currentHits / (float) this.breakSteps) * 9);
-                world.destroyBlockProgress(pos.hashCode(), pos, stage);
-                world.levelEvent(1001, pos, Block.getId(level.getBlockState(pos)));
+        for (Identifier id : presets) {
+            CannonPreset preset = CannonPresetManager.PRESETS.get(id);
+            if (preset != null) {
+                handle(level, pos, preset);
             }
         }
         return true;
+    }
+
+    private void handle(LevelAccessor level, BlockPos pos, CannonPreset preset) {
+        boolean matches = preset.tag().map(t -> level.getBlockState(pos).is(t)).orElse(false) ||
+                preset.block().map(b -> level.getBlockState(pos).is(b)).orElse(false);
+
+        if (!matches || !(level instanceof Level world)) return;
+
+        int currentHits = HIT_CACHE.getOrDefault(pos, 0) + 1;
+        int steps = preset.breakSteps();
+
+        if (currentHits >= steps) {
+            level.destroyBlock(pos, true);
+            HIT_CACHE.remove(pos);
+            world.destroyBlockProgress(pos.hashCode(), pos, -1);
+        } else {
+            HIT_CACHE.put(pos, currentHits);
+            int stage = (int) (((float) currentHits / (float) steps) * 9);
+            world.destroyBlockProgress(pos.hashCode(), pos, stage);
+            world.levelEvent(1001, pos, Block.getId(level.getBlockState(pos)));
+        }
     }
 
     @Override
