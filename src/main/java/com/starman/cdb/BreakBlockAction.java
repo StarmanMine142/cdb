@@ -32,20 +32,28 @@ public record BreakBlockAction(Optional<TagKey<Block>> tag, int breakSteps, List
     public boolean execute(LevelAccessor level, ItemStack projectile, BlockHitResult ray) {
         if (level.isClientSide()) return true;
 
-        tag.ifPresent(t -> handle(level, ray.getBlockPos(), t, breakSteps));
+        BlockPos pos = ray.getBlockPos();
+
+        tag.ifPresent(t -> handle(level, pos, new CannonPreset(breakSteps, Optional.of(t), Optional.empty())));
 
         for (ResourceLocation id : presets) {
             CannonPreset preset = CannonPresetManager.PRESETS.get(id);
-            if (preset != null) handle(level, ray.getBlockPos(), preset.tag(), preset.breakSteps());
+            if (preset != null) {
+                handle(level, pos, preset);
+            }
         }
         return true;
     }
 
-    private void handle(LevelAccessor level, BlockPos pos, TagKey<Block> tag, int steps) {
-        if (!level.getBlockState(pos).is(tag)) return;
+    private void handle(LevelAccessor level, BlockPos pos, CannonPreset preset) {
+        boolean matches = preset.tag().map(t -> level.getBlockState(pos).is(t)).orElse(false) ||
+                preset.block().map(b -> level.getBlockState(pos).is(b)).orElse(false);
+
+        if (!matches) return;
         if (!(level instanceof Level world)) return;
 
         int currentHits = HIT_CACHE.getOrDefault(pos, 0) + 1;
+        int steps = preset.breakSteps();
 
         if (currentHits >= steps) {
             level.destroyBlock(pos, true);
